@@ -3,7 +3,8 @@ from django.contrib import messages, auth
 from django.core.urlresolvers import reverse
 from django.template.context_processors import csrf
 from accounts.forms import UserRegistrationForm
-from django.contrib.auth_decorators import login_required
+from accounts.forms import UserLoginForm
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -30,16 +31,17 @@ def register(request):
 
     return render(request, 'register.html', args)
 
+
 @login_required(login_url='/login/')
 def profile(request):
     return render(request, 'profile.html')
+
 
 def login(request):
     if request.method == 'POST':
         form = UserLoginForm(request.POST)
         if form.is_valid():
             user = auth.authenticate(email=request.POST.get('email'), password=request.POST.get('password'))
-
 
             if user is not None:
                 auth.login(request, user)
@@ -54,3 +56,9 @@ def login(request):
     args = {'form':form}
     args.update(csrf(request))
     return render(request, 'login.html', args)
+
+
+def logout(request):
+    auth.logout(request)
+    messages.success(request, 'You have successfully logged out')
+    return redirect(reverse('login'))
