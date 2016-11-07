@@ -6,6 +6,7 @@ from django.utils import timezone
 
 # Create your models here.
 
+
 class AccountsUserManager(UserManager):
     def _create_user(self, username, email, password, is_staff, is_superuser, **extra_fields):
         now = timezone.now()
@@ -21,4 +22,6 @@ class AccountsUserManager(UserManager):
 
 
 class User(AbstractUser):
-    objects= AccountsUserManager()
+    stripe_id = models.CharField(max_length=40, default='')
+    objects = AccountsUserManager()
+
